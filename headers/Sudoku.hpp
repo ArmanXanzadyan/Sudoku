@@ -18,7 +18,6 @@ public:
     void play();
     void solveSudoko();
     void generateRandomSudokuColored(const int percent);
-
 private:
     bool fillGrid(const size_t row, const size_t col);
     int getRandomNumber() const;
@@ -33,7 +32,8 @@ private:
     std::pair<int, int> getPath() const;
     bool isValidSudoko();
 
-private:
+///private:
+public:
     std::pair<int, bool> grid_[SIZE][SIZE]; // first = value, second = true->user-fillable(սև), false->pre-filled(կարմիր)
 };
 

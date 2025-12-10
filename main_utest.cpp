@@ -9,7 +9,7 @@
 TEST(SudokuTest, PlayGUI)
 {
     Sudoku sudoku;
-    sudoku.generateRandomSudokuColored(2);
+    sudoku.generateRandomSudokuColored(50);
     sudoku.play();
 }
 
