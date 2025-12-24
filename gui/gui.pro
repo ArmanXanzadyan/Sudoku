@@ -1,14 +1,14 @@
 QT += widgets
 CONFIG += c++17
 
-# Path to headers
-INCLUDEPATH += ../headers
+SOURCES += \
+    main.cpp \
+    GuiBoard.cpp \
+    MainWindow.cpp \
+    ../sources/Sudoku.cpp
 
-# GUI sources
-SOURCES += main.cpp \
-           GuiBoard.cpp \
-           ../sources/Sudoku.cpp   # <-- add core cpp here
-
-HEADERS += GuiBoard.hpp \
-           ../headers/Sudoku.hpp
+HEADERS += \
+    GuiBoard.hpp \
+    MainWindow.hpp \
+    ../headers/Sudoku.hpp
 

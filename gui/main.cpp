@@ -1,17 +1,13 @@
 #include <QApplication>
-#include "GuiBoard.hpp"
-#include "../headers/Sudoku.hpp"
+#include "MainWindow.hpp"
 
-int main(int argc, char** argv)
+int
+main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    Sudoku sudoku;
-    sudoku.generateRandomSudokuColored(50);
-
-    GuiBoard board;
-    board.setSudoku(&sudoku);
-    board.show();
+    MainWindow window;
+    window.show();
 
     return app.exec();
 }

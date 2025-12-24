@@ -44,7 +44,7 @@ release: $(progname) $(utest)
 	@echo "🚀 Release build ready"
 
 
-debug:   bench
+debug:   utest
 release: utest bench
 
 qa: $(TESTS)

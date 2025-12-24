@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++1z -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../headers -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++
+INCPATH       = -I. -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++
 QMAKE         = /usr/bin/qmake6
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -54,11 +54,15 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		GuiBoard.cpp \
-		../sources/Sudoku.cpp moc_GuiBoard.cpp
+		MainWindow.cpp \
+		../sources/Sudoku.cpp moc_GuiBoard.cpp \
+		moc_MainWindow.cpp
 OBJECTS       = main.o \
 		GuiBoard.o \
+		MainWindow.o \
 		Sudoku.o \
-		moc_GuiBoard.o
+		moc_GuiBoard.o \
+		moc_MainWindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/common/linux.conf \
@@ -125,8 +129,10 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/lex.prf \
 		gui.pro GuiBoard.hpp \
+		MainWindow.hpp \
 		../headers/Sudoku.hpp main.cpp \
 		GuiBoard.cpp \
+		MainWindow.cpp \
 		../sources/Sudoku.cpp
 QMAKE_TARGET  = gui
 DESTDIR       = 
@@ -293,8 +299,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents GuiBoard.hpp ../headers/Sudoku.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp GuiBoard.cpp ../sources/Sudoku.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents GuiBoard.hpp MainWindow.hpp ../headers/Sudoku.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp GuiBoard.cpp MainWindow.cpp ../sources/Sudoku.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -326,14 +332,21 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt6/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_GuiBoard.cpp
+compiler_moc_header_make_all: moc_GuiBoard.cpp moc_MainWindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_GuiBoard.cpp
+	-$(DEL_FILE) moc_GuiBoard.cpp moc_MainWindow.cpp
 moc_GuiBoard.cpp: GuiBoard.hpp \
 		../headers/Sudoku.hpp \
 		moc_predefs.h \
 		/usr/lib/qt6/libexec/moc
-	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/arman/Desktop2/Sudoko/gui/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/arman/Desktop2/Sudoko/gui -I/home/arman/Desktop2/Sudoko/headers -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include GuiBoard.hpp -o moc_GuiBoard.cpp
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/arman/Desktop2/Sudoko/gui/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/arman/Desktop2/Sudoko/gui -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include GuiBoard.hpp -o moc_GuiBoard.cpp
+
+moc_MainWindow.cpp: MainWindow.hpp \
+		GuiBoard.hpp \
+		../headers/Sudoku.hpp \
+		moc_predefs.h \
+		/usr/lib/qt6/libexec/moc
+	/usr/lib/qt6/libexec/moc $(DEFINES) --include /home/arman/Desktop2/Sudoko/gui/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt6/mkspecs/linux-g++ -I/home/arman/Desktop2/Sudoko/gui -I/usr/include/x86_64-linux-gnu/qt6 -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets -I/usr/include/x86_64-linux-gnu/qt6/QtGui -I/usr/include/x86_64-linux-gnu/qt6/QtCore -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include MainWindow.hpp -o moc_MainWindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -351,7 +364,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 
 ####### Compile
 
-main.o: main.cpp GuiBoard.hpp \
+main.o: main.cpp MainWindow.hpp \
+		GuiBoard.hpp \
 		../headers/Sudoku.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
@@ -359,11 +373,19 @@ GuiBoard.o: GuiBoard.cpp GuiBoard.hpp \
 		../headers/Sudoku.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GuiBoard.o GuiBoard.cpp
 
+MainWindow.o: MainWindow.cpp MainWindow.hpp \
+		GuiBoard.hpp \
+		../headers/Sudoku.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MainWindow.o MainWindow.cpp
+
 Sudoku.o: ../sources/Sudoku.cpp ../headers/Sudoku.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Sudoku.o ../sources/Sudoku.cpp
 
 moc_GuiBoard.o: moc_GuiBoard.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_GuiBoard.o moc_GuiBoard.cpp
+
+moc_MainWindow.o: moc_MainWindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MainWindow.o moc_MainWindow.cpp
 
 ####### Install
 

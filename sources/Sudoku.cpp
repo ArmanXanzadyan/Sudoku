@@ -27,6 +27,10 @@ Sudoku::getRandomNumber() const
     return std::rand() % SIZE;
 }
 
+
+/////////////////////////////////// CHECK FUNCTIONS
+
+
 bool
 Sudoku::isHorizontal(const size_t row, const int value) const
 {
@@ -64,6 +68,14 @@ Sudoku::isValid(const size_t row, const size_t col, const int number) const
     return isHorizontal(row, number) && isVertical(col, number) && isBlock(row, col, number);
 }
 
+
+////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
 bool
 Sudoku::fillGrid(const size_t row, const size_t col)
 {
@@ -87,31 +99,33 @@ Sudoku::fillGrid(const size_t row, const size_t col)
     return false;
 }
 
+
 void
-Sudoku::generateRandomSudokuColored(const int percent)
+Sudoku::generateRandomSudoku(const int percent)
 {
     init();
     fillGrid(0, 0);
 
     const size_t removeCount = SIZE * SIZE * percent / 100;
-    for (size_t i = 0; i < removeCount;) {
+
+    size_t removed = 0;
+    while (removed < removeCount) {
         const int row = getRandomNumber();
         const int col = getRandomNumber();
-        if (!grid_[row][col].second) {
+
+        if (grid_[row][col].first != 0) {
             grid_[row][col].first = 0;
-            grid_[row][col].second = true;
-            ++i;
+            ++removed;
         }
     }
 
     for (size_t i = 0; i < SIZE; ++i) {
         for (size_t j = 0; j < SIZE; ++j) {
-            if (!grid_[i][j].second && grid_[i][j].first != 0) {
-                grid_[i][j].second = false;
-            }
+            grid_[i][j].second = (0 == grid_[i][j].first);
         }
     }
 }
+
 
 void
 Sudoku::setCellValue(const size_t row, const size_t col, const int val)
@@ -139,7 +153,7 @@ Sudoku::isValidSudoko()
             if (num == 0) continue;
 
             grid_[row][col].first = 0;
-            bool valid = isValid(row, col, num);
+            const bool valid = isValid(row, col, num);
             grid_[row][col].first = num;
 
             if (!valid) return false;
@@ -178,6 +192,18 @@ Sudoku::getNumber() const
     return x;
 }
 
+bool
+Sudoku::isSuccesfulEnd()
+{
+    return isFull() && isValidSudoko();
+}
+
+
+bool
+Sudoku::canWePutElement(const int row, const int column) const
+{
+    return grid_[row][column].second;
+}
 
 void
 Sudoku::play()
@@ -185,7 +211,7 @@ Sudoku::play()
     while (true) {
         print();
 
-        if (isFull() && isValidSudoko()) {
+        if (isSuccesfulEnd()) {
             std::cout << "\n🎉 Bravo! You solved the Sudoku! 🎉\n";
             return;
         }
@@ -195,15 +221,44 @@ Sudoku::play()
         const int r = getNumber();
         const int c = getNumber();
         const int val = getNumber();
-
-///        if (r == 0 && c == 0 && val == 0) return;
-
         const size_t row = static_cast<size_t>(r - 1);
         const size_t col = static_cast<size_t>(c - 1);
+        if (!canWePutElement(row, col)) {
+            std::cout << "❌ You can't change this cell!\n";
+            continue;
+        }
+        if (!isValid(row, col, val)) {
+            std::cout << "❌ Invalid value!\n";
+            continue;
+        }
+        setCellValue(row, col, val);
+    }
+}
 
-        if (isValid(row, col, val)) {
-            setCellValue(row, col, val);
+
+std::vector<int>
+Sudoku::getPossibleValues(const size_t row, const size_t col) const
+{
+    std::vector<int> res;
+    if (!grid_[row][col].second || grid_[row][col].first != 0)
+        return res;
+    for (int num = 1; num <= 9; ++num) {
+        if (isValid(row, col, num)) {
+            res.push_back(num);
         }
     }
+    return res;
+}
+
+int
+Sudoku::getGridNumber(const int row, const int column) const
+{
+    return grid_[row][column].first;
+}
+
+bool
+Sudoku::getGridFilled(const int row, const int column) const
+{
+    return grid_[row][column].second;
 }
 

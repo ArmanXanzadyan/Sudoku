@@ -2,10 +2,10 @@
 #define GUIBOARD_HPP
 
 #include <QWidget>
-#include <QFont>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <vector>
 #include "../headers/Sudoku.hpp"
 
 class GuiBoard : public QWidget
@@ -14,21 +14,21 @@ class GuiBoard : public QWidget
 
 public:
     explicit GuiBoard(QWidget* parent = nullptr);
-
-    QSize sizeHint() const override { return QSize(450, 450); }
-    void setSudoku(Sudoku* s) { sudoku_ = s; update(); }
+    void setSudoku(Sudoku* s);
+    void toggleHints();
 
 protected:
-    void paintEvent(QPaintEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
+    void paintEvent(QPaintEvent*) override;
+    void mousePressEvent(QMouseEvent*) override;
+    void keyPressEvent(QKeyEvent*) override;
 
 private:
     Sudoku* sudoku_;
-    int selectedRow_;
-    int selectedCol_;
-    QFont font_;
+    int row_;
+    int col_;
+    bool showHints_;
+    std::vector<int> possible_;
 };
 
-#endif // GUIBOARD_HPP
+#endif
 
